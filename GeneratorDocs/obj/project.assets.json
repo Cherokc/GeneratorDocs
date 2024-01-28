@@ -232,11 +232,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Work))\\TestPractice\\GeneratorDocs\\GeneratorDocs\\GeneratorDocs.csproj",
+      "projectUniqueName": "C:\\Work))\\GeneratorDocs-main\\GeneratorDocs\\GeneratorDocs.csproj",
       "projectName": "GeneratorDocs",
-      "projectPath": "C:\\Work))\\TestPractice\\GeneratorDocs\\GeneratorDocs\\GeneratorDocs.csproj",
+      "projectPath": "C:\\Work))\\GeneratorDocs-main\\GeneratorDocs\\GeneratorDocs.csproj",
       "packagesPath": "C:\\Users\\Cherokc\\.nuget\\packages\\",
-      "outputPath": "C:\\Work))\\TestPractice\\GeneratorDocs\\GeneratorDocs\\obj\\",
+      "outputPath": "C:\\Work))\\GeneratorDocs-main\\GeneratorDocs\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"

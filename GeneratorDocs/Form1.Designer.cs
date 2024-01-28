@@ -47,6 +47,12 @@
             this.dialog = new System.Windows.Forms.FolderBrowserDialog();
             this.progressBar = new System.Windows.Forms.ProgressBar();
             this.resultLabel = new System.Windows.Forms.Label();
+            this.label1 = new System.Windows.Forms.Label();
+            this.separatorsTextBox = new System.Windows.Forms.TextBox();
+            this.label2 = new System.Windows.Forms.Label();
+            this.wordSetTextBox = new System.Windows.Forms.TextBox();
+            this.wordSetButton = new System.Windows.Forms.Button();
+            this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.countUpDown)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.minUpDown)).BeginInit();
@@ -97,7 +103,7 @@
             // 
             // generateButton
             // 
-            this.generateButton.Location = new System.Drawing.Point(199, 286);
+            this.generateButton.Location = new System.Drawing.Point(199, 367);
             this.generateButton.Name = "generateButton";
             this.generateButton.Size = new System.Drawing.Size(130, 30);
             this.generateButton.TabIndex = 2;
@@ -137,7 +143,7 @@
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.countLabel.AutoSize = true;
-            this.countLabel.Location = new System.Drawing.Point(64, 135);
+            this.countLabel.Location = new System.Drawing.Point(64, 236);
             this.countLabel.Name = "countLabel";
             this.countLabel.Size = new System.Drawing.Size(316, 20);
             this.countLabel.TabIndex = 6;
@@ -145,7 +151,7 @@
             // 
             // countUpDown
             // 
-            this.countUpDown.Location = new System.Drawing.Point(386, 133);
+            this.countUpDown.Location = new System.Drawing.Point(386, 234);
             this.countUpDown.Maximum = new decimal(new int[] {
             1000,
             0,
@@ -168,7 +174,7 @@
             // wordCountLabel
             // 
             this.wordCountLabel.AutoSize = true;
-            this.wordCountLabel.Location = new System.Drawing.Point(48, 187);
+            this.wordCountLabel.Location = new System.Drawing.Point(48, 288);
             this.wordCountLabel.Name = "wordCountLabel";
             this.wordCountLabel.Size = new System.Drawing.Size(444, 20);
             this.wordCountLabel.TabIndex = 8;
@@ -177,7 +183,7 @@
             // minLabel
             // 
             this.minLabel.AutoSize = true;
-            this.minLabel.Location = new System.Drawing.Point(48, 226);
+            this.minLabel.Location = new System.Drawing.Point(48, 327);
             this.minLabel.Name = "minLabel";
             this.minLabel.Size = new System.Drawing.Size(37, 20);
             this.minLabel.TabIndex = 9;
@@ -186,7 +192,7 @@
             // maxLabel
             // 
             this.maxLabel.AutoSize = true;
-            this.maxLabel.Location = new System.Drawing.Point(293, 226);
+            this.maxLabel.Location = new System.Drawing.Point(293, 327);
             this.maxLabel.Name = "maxLabel";
             this.maxLabel.Size = new System.Drawing.Size(40, 20);
             this.maxLabel.TabIndex = 10;
@@ -194,7 +200,7 @@
             // 
             // minUpDown
             // 
-            this.minUpDown.Location = new System.Drawing.Point(91, 224);
+            this.minUpDown.Location = new System.Drawing.Point(91, 325);
             this.minUpDown.Maximum = new decimal(new int[] {
             100000,
             0,
@@ -217,7 +223,7 @@
             // 
             // maxUpDown
             // 
-            this.maxUpDown.Location = new System.Drawing.Point(339, 224);
+            this.maxUpDown.Location = new System.Drawing.Point(339, 325);
             this.maxUpDown.Maximum = new decimal(new int[] {
             100000,
             0,
@@ -240,7 +246,7 @@
             // 
             // progressBar
             // 
-            this.progressBar.Location = new System.Drawing.Point(48, 322);
+            this.progressBar.Location = new System.Drawing.Point(48, 403);
             this.progressBar.Name = "progressBar";
             this.progressBar.Size = new System.Drawing.Size(444, 29);
             this.progressBar.TabIndex = 13;
@@ -257,11 +263,62 @@
             this.resultLabel.TabIndex = 15;
             this.resultLabel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
+            // label1
+            // 
+            this.label1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(135, 199);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(135, 20);
+            this.label1.TabIndex = 16;
+            this.label1.Text = "Разделители слов:";
+            // 
+            // separatorsTextBox
+            // 
+            this.separatorsTextBox.Location = new System.Drawing.Point(276, 196);
+            this.separatorsTextBox.Name = "separatorsTextBox";
+            this.separatorsTextBox.Size = new System.Drawing.Size(139, 27);
+            this.separatorsTextBox.TabIndex = 17;
+            this.separatorsTextBox.Text = " \",.-?!\':;";
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(91, 120);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(353, 20);
+            this.label2.TabIndex = 20;
+            this.label2.Text = "Выберите путь к файлу, содержащий набор слов.";
+            // 
+            // wordSetTextBox
+            // 
+            this.wordSetTextBox.Location = new System.Drawing.Point(12, 157);
+            this.wordSetTextBox.Name = "wordSetTextBox";
+            this.wordSetTextBox.Size = new System.Drawing.Size(474, 27);
+            this.wordSetTextBox.TabIndex = 19;
+            // 
+            // wordSetButton
+            // 
+            this.wordSetButton.Location = new System.Drawing.Point(492, 156);
+            this.wordSetButton.Name = "wordSetButton";
+            this.wordSetButton.Size = new System.Drawing.Size(28, 28);
+            this.wordSetButton.TabIndex = 18;
+            this.wordSetButton.Text = "...";
+            this.wordSetButton.UseVisualStyleBackColor = true;
+            this.wordSetButton.Click += new System.EventHandler(this.wordSetButton_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(532, 408);
+            this.ClientSize = new System.Drawing.Size(532, 482);
+            this.Controls.Add(this.label2);
+            this.Controls.Add(this.wordSetTextBox);
+            this.Controls.Add(this.wordSetButton);
+            this.Controls.Add(this.separatorsTextBox);
+            this.Controls.Add(this.label1);
             this.Controls.Add(this.resultLabel);
             this.Controls.Add(this.progressBar);
             this.Controls.Add(this.maxUpDown);
@@ -313,5 +370,11 @@
         private FolderBrowserDialog dialog;
         private ProgressBar progressBar;
         private Label resultLabel;
+        private Label label1;
+        private TextBox separatorsTextBox;
+        private Label label2;
+        private TextBox wordSetTextBox;
+        private Button wordSetButton;
+        private OpenFileDialog openFileDialog1;
     }
 }

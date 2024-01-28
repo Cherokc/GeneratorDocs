@@ -1,5 +1,7 @@
+using System;
 using System.Diagnostics;
 using System.IO;
+using System.Reflection.Metadata;
 using System.Text;
 using System.Xml.XPath;
 using Xceed.Document.NET;
@@ -9,17 +11,18 @@ namespace GeneratorDocs
 {
     public partial class Form1 : Form
     {
-        string[] russianWords; // будущее место под хранение слов
-        string marks = " .,:;'\"-?!"; // массив знаков пунктуации
-
+        DocGenerator DC;
         public Form1()
         {
             InitializeComponent();
+            openFileDialog1.InitialDirectory = AppDomain.CurrentDomain.BaseDirectory;
+            DC = new DocGenerator(separatorsTextBox.Text);
         }
 
         private void Form1_Load(object sender, EventArgs e)
         {
             pathTextBox.Text = AppDomain.CurrentDomain.BaseDirectory + "Created Files\\"; // устанавливаем путь к папке по умолчанию
+            wordSetTextBox.Text = AppDomain.CurrentDomain.BaseDirectory + "russian.txt"; // устанавливаем путь к папке по умолчанию
         }
 
         private void pathButton_Click(object sender, EventArgs e) 
@@ -30,31 +33,28 @@ namespace GeneratorDocs
             }
         }
 
+        private void wordSetButton_Click(object sender, EventArgs e)
+        {
+            if (openFileDialog1.ShowDialog() == DialogResult.OK) // получаем выбранный путь
+            {
+                wordSetTextBox.Text = openFileDialog1.FileName;
+            }
+        }
+
         private void generateButton_Click(object sender, EventArgs e)
         {
-            if(russianWords == null) 
+            if (!DC.ReadWords(wordSetTextBox.Text))
             {
-                try
-                {
-                    Encoding.RegisterProvider(CodePagesEncodingProvider.Instance); // инициализируем массив слов
-                    FileStream MainFile = new FileStream(AppDomain.CurrentDomain.BaseDirectory + "russian.txt", FileMode.Open, FileAccess.Read);
-                    using (StreamReader reader = new StreamReader(MainFile, Encoding.GetEncoding(1251))) 
-                    {
-                        russianWords = reader.ReadToEnd().Split('\n');
-                    }
-                }
-                catch (Exception exception)
-                {
-                    MessageBox.Show("Ошибка чтения из файла, проверьте файл russian.txt в папке с приложением", "Ошибка!");
-                    return;
-                }
+                MessageBox.Show("Ошибка чтения из файла, проверьте указанный файл", "Ошибка!");
+                return;
             }
 
-            if (pathTextBox.Text.Length == 0) // проверка на пустую строку
+            if (!CheckPathTextBox(pathTextBox.Text))
             {
                 MessageBox.Show("Проверьте правильность пути");
                 return;
             }
+
                 
             if (MessageBox.Show("Вы уверены?", "Подтверждение", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
             {
@@ -75,44 +75,52 @@ namespace GeneratorDocs
                 int min = (int)minUpDown.Value;
                 int max = (int)maxUpDown.Value;
                 GenerateDocs(path, count, min, max);
+
+                generateButton.Enabled = true;
             }
-            generateButton.Enabled = true;
         }
 
-        private void GenerateDocs(string path, int docsCount, int wordCountMin, int wordCountMax)
+        private bool CheckPathTextBox(string path)
         {
-            Random random = new Random();
-            var errorCount = 0;
+            if (path.Length == 0) // проверка на пустую строку
+            {
+                return false;
+            }
+            return true;
+        }
+
+        private async void GenerateDocs(string path, int docsCount, int wordCountMin, int wordCountMax)
+        {
             Stopwatch stopwatch = new Stopwatch();
             stopwatch.Start();
+            progressBar.Value = 0;
 
+            Task[] tasks = new Task[docsCount];
             for (int i = 0; i < docsCount; i++)
             {
-                progressBar.Value = (int)Math.Round(i*100.0 / docsCount);
-                try
-                {
-                    DocX document = DocX.Create(path + DateTime.Now.ToString("ddMMyy_HHmmss_ffff"));
-                    Paragraph paragraph = document.InsertParagraph();
-                    var wordCount = random.Next(wordCountMin, wordCountMax);
-                    for (int j = 0; j < wordCount; j++)
-                    {
-                        var wordIndex = random.Next(0, russianWords.Length - 1);
-                        var markIndex = (wordIndex + j) % (marks.Length - 1);
-                        paragraph.Append(russianWords[wordIndex] + (markIndex != 0 ? marks[markIndex] + " " : " "));
-                    }
-                    document.Save();
-                }
-                catch(Exception ex) 
-                { 
-                    errorCount++; // запоминаем число несовершившихся созданий
-                    continue; 
-                }
+                tasks[i] = Task.Run(() => DC.CreateDocAndFill(path, wordCountMin, wordCountMax));
             }
 
+            UpdateProgressBar(tasks, docsCount);
+
+            await Task.WhenAll(tasks);
             stopwatch.Stop();
             progressBar.Value = 100;
-            resultLabel.Text = $"Создано {docsCount - errorCount} из {docsCount}, затраченное время: {stopwatch.ElapsedMilliseconds/1000.0} с";
-            resultLabel.Location = new Point((this.Width - resultLabel.Width)/2, resultLabel.Location.Y);
+            resultLabel.Text = $"Создано {docsCount - tasks.Where(s => s.IsFaulted).Count()} из {docsCount}, затраченное время: {stopwatch.ElapsedMilliseconds / 1000.0} с";
+            resultLabel.Location = new Point((this.Width - resultLabel.Width) / 2, Height - 90);
+        }
+
+        private async void UpdateProgressBar(Task[] tasks, int docsCount)
+        {
+            while (!tasks.All(task => task.IsCompleted))
+            {
+                int completedTasks = tasks.Count(task => task.IsCompleted);
+                int progressValue = (int)((double)completedTasks / docsCount * 100);
+
+                progressBar.Value = progressValue;
+
+                await Task.Delay(10);
+            }
         }
 
         private void checkMinMax(object sender, EventArgs e)
@@ -128,13 +136,14 @@ namespace GeneratorDocs
 
         private void info_Click(object sender, EventArgs e)
         {
-            MessageBox.Show("   Данное приложение было создано в рамках тестового задания для практиканта.\n" +
-                            "   Для генерации файлов необходимо указать путь к папке, где будут создаваться документы, их количество, а также количество слов в заданных пределах.\n" +
+            MessageBox.Show("   Для генерации файлов необходимо указать путь к папке, где будут создаваться документы, их количество, а также количество слов в заданных пределах.\n" +
                             "   По умолчанию указана рабочая папка приложения. Можно указать просто название папки и она создасться в папке с приложением.\n" +
                             "   Процесс генерации файлов отображается в нижней части приложения, где расположен индикатор выполнения и появляется текст о выполненной работе.\n" +
                             "   Для реализации программы была использована библиотека DocX для работы с документами: https://github.com/xceedsoftware/DocX\n" +
                             "   В качестве списка русских слов был использован файл, состоящий из 1531464 записей: https://github.com/danakt/russian-words\n" +
                             "                                                                                                   alwaysbeearly", "О программе...");
         }
+
+
     }
 }
